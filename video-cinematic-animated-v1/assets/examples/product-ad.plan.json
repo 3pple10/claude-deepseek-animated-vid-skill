@@ -1,0 +1,41 @@
+{
+  "title": "Aurora Bottle - 13s product ad",
+  "preset": "product-ad",
+  "platform": {"aspect": "9:16", "max_seconds": 15},
+  "budget": {"max_credits": 60},
+  "identity": [
+    {"id": "bottle", "kind": "product", "locked": true,
+     "descriptor": "matte teal insulated steel bottle, brushed silver cap, white wordmark AURORA on the body",
+     "ref_images": ["refs/bottle_front.png"]},
+    {"id": "runner", "kind": "character", "locked": true,
+     "descriptor": "woman in her late 20s, black ponytail, brown eyes, small mole under left eye, wearing a grey running jacket",
+     "ref_images": ["refs/runner_face.png"]}
+  ],
+  "style": {"look": "photoreal commercial film look, soft contrast, teal and warm skin palette", "light_dir": "left"},
+  "shots": [
+    {"id": "s1", "duration": 2, "framing": "extreme close-up",
+     "camera": {"moves": ["crash zoom"], "speed": "fast", "lens": "macro"},
+     "subject_ids": ["bottle"], "action": "condensation droplets slide down the bottle body, preserve exact logo and label text",
+     "weight_cue": "droplet gains speed and leaves a wet trail, contact shadow under the base",
+     "setting": "dark studio table", "light": "hard rim light from the left", "light_dir": "left",
+     "mood": "tense anticipation", "start_from": "ref", "tier": "draft"},
+    {"id": "s2", "duration": 4, "framing": "medium",
+     "camera": {"moves": ["orbit"], "speed": "slow", "lens": "85mm"},
+     "subject_ids": ["bottle"], "action": "bottle rests on a wet stone, camera circles it, preserve exact logo and label text",
+     "weight_cue": "reflection slides across the steel, water pools around the base",
+     "setting": "wet stone ledge at dawn", "light": "low sun rim light from the left", "light_dir": "left",
+     "mood": "calm confidence", "start_from": "prev_last_frame", "tier": "draft"},
+    {"id": "s3", "duration": 4, "framing": "medium close-up",
+     "camera": {"moves": ["tracking", "push-in"], "speed": "medium", "lens": "50mm"},
+     "subject_ids": ["runner", "bottle"], "action": "runner jogs along the shoreline and lifts the bottle to drink",
+     "weight_cue": "foot plant in wet sand, jacket fabric lags behind each stride, breath visible",
+     "setting": "shoreline at dawn", "light": "low sun from the left", "light_dir": "left",
+     "mood": "energized", "screen_direction": "right", "start_from": "ref", "tier": "draft"},
+    {"id": "s4", "duration": 3, "framing": "wide",
+     "camera": {"moves": ["pull-back reveal", "crane up"], "speed": "slow", "lens": "35mm"},
+     "subject_ids": ["bottle"], "action": "bottle stands alone on the ledge as the sea opens behind it, preserve exact logo and label text",
+     "weight_cue": "contact shadow stretches with rising camera, light wind moves the water surface",
+     "setting": "wet stone ledge, open sea behind", "light": "low sun from the left", "light_dir": "left",
+     "mood": "resolved", "start_from": "keyframe", "keyframe_group": "bottle_payoff", "tier": "draft"}
+  ]
+}

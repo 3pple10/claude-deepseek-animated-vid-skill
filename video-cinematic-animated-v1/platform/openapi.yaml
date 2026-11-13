@@ -1,0 +1,158 @@
+openapi: 3.0.3
+info:
+  title: Director-First Video API
+  version: 0.1.0
+  description: Plan-first video generation. Plans are validated and priced before any render spends credits.
+servers:
+  - url: https://api.example.com
+security:
+  - bearerAuth: []
+paths:
+  /v1/identities:
+    post:
+      summary: Create an identity (character, product, location) with reference images
+      operationId: createIdentity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/IdentityInput'}
+      responses:
+        '201': {description: Created, content: {application/json: {schema: {$ref: '#/components/schemas/Identity'}}}}
+  /v1/projects:
+    post:
+      summary: Create a project from a brief; returns a draft Shot Graph for approval
+      operationId: createProject
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProjectInput'}
+      responses:
+        '202': {description: Planning started, content: {application/json: {schema: {$ref: '#/components/schemas/Project'}}}}
+  /v1/projects/{projectId}:
+    get:
+      summary: Project status, shots, cost so far
+      operationId: getProject
+      parameters: [{$ref: '#/components/parameters/projectId'}]
+      responses:
+        '200': {description: OK, content: {application/json: {schema: {$ref: '#/components/schemas/Project'}}}}
+  /v1/projects/{projectId}/plan:
+    get:
+      summary: Get Shot Graph with validation result and cost estimate
+      operationId: getPlan
+      parameters: [{$ref: '#/components/parameters/projectId'}]
+      responses:
+        '200': {description: OK, content: {application/json: {schema: {$ref: '#/components/schemas/PlanView'}}}}
+    put:
+      summary: Replace the Shot Graph (re-validated and re-priced)
+      operationId: putPlan
+      parameters: [{$ref: '#/components/parameters/projectId'}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, description: Shot Graph, see assets/plan.schema.json}}}
+      responses:
+        '200': {description: OK, content: {application/json: {schema: {$ref: '#/components/schemas/PlanView'}}}}
+        '422': {description: Validation errors, content: {application/json: {schema: {$ref: '#/components/schemas/ValidationResult'}}}}
+  /v1/projects/{projectId}/plan/approve:
+    post:
+      summary: Approve plan; starts keyframes and draft renders; reserves draft credits
+      operationId: approvePlan
+      parameters: [{$ref: '#/components/parameters/projectId'}]
+      responses:
+        '202': {description: Rendering drafts}
+        '402': {description: Insufficient credits}
+  /v1/projects/{projectId}/shots/{shotId}/regenerate:
+    post:
+      summary: Regenerate one shot, changing only the failing dimension
+      operationId: regenerateShot
+      parameters: [{$ref: '#/components/parameters/projectId'}, {$ref: '#/components/parameters/shotId'}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dimension]
+              properties:
+                dimension: {type: string, enum: [identity, camera, physics, lighting, duration]}
+                note: {type: string}
+      responses:
+        '202': {description: Accepted}
+  /v1/projects/{projectId}/shots/{shotId}/approve:
+    post:
+      summary: Approve a draft shot and queue its final-tier render
+      operationId: approveShot
+      parameters: [{$ref: '#/components/parameters/projectId'}, {$ref: '#/components/parameters/shotId'}]
+      responses:
+        '202': {description: Final render queued}
+  /v1/projects/{projectId}/assemble:
+    post:
+      summary: Normalize, stitch and mix approved finals
+      operationId: assemble
+      parameters: [{$ref: '#/components/parameters/projectId'}]
+      responses:
+        '202': {description: Assembling}
+  /v1/projects/{projectId}/assets:
+    get:
+      summary: List keyframes, clips, final video with signed URLs and QC reports
+      operationId: listAssets
+      parameters: [{$ref: '#/components/parameters/projectId'}]
+      responses:
+        '200': {description: OK}
+  /v1/credits:
+    get:
+      summary: Credit balance and recent ledger entries
+      operationId: getCredits
+      responses:
+        '200': {description: OK}
+components:
+  securitySchemes:
+    bearerAuth: {type: http, scheme: bearer}
+  parameters:
+    projectId: {name: projectId, in: path, required: true, schema: {type: string}}
+    shotId: {name: shotId, in: path, required: true, schema: {type: string}}
+  schemas:
+    IdentityInput:
+      type: object
+      required: [kind, descriptor]
+      properties:
+        kind: {type: string, enum: [character, product, location]}
+        descriptor: {type: string}
+        ref_image_urls: {type: array, items: {type: string, format: uri}}
+        consent_confirmed: {type: boolean, description: Required when kind is character and refs show a real person}
+    Identity:
+      allOf:
+        - {$ref: '#/components/schemas/IdentityInput'}
+        - {type: object, properties: {id: {type: string}, approved_keyframes: {type: array, items: {type: string}}}}
+    ProjectInput:
+      type: object
+      required: [brief]
+      properties:
+        brief: {type: string}
+        preset: {type: string, enum: [product-ad, social-reel, talking-head, story, custom]}
+        aspect: {type: string, enum: ['9:16', '16:9', '1:1', '4:5']}
+        max_seconds: {type: number}
+        identity_ids: {type: array, items: {type: string}}
+        budget_credits: {type: number}
+        planner: {type: string, enum: [economy, premium], default: economy}
+        webhook_url: {type: string, format: uri}
+    Project:
+      type: object
+      properties:
+        id: {type: string}
+        state: {type: string, enum: [planning, awaiting_plan_approval, rendering_drafts, awaiting_shot_approval, rendering_finals, assembling, done, failed]}
+        credits_spent: {type: number}
+        shots: {type: array, items: {type: object, properties: {id: {type: string}, state: {type: string}, qc: {type: object}}}}
+    ValidationResult:
+      type: object
+      properties:
+        errors: {type: array, items: {type: string}}
+        warnings: {type: array, items: {type: string}}
+    PlanView:
+      type: object
+      properties:
+        plan: {type: object}
+        validation: {$ref: '#/components/schemas/ValidationResult'}
+        cost: {type: object}

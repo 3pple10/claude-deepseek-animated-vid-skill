@@ -1,0 +1,20 @@
+{
+  "_note": "PLACEHOLDER values. Credits are relative units, NOT verified prices. Operator must replace with real provider prices and bind each class to a real adapter.",
+  "credits_unit": "relative-unverified",
+  "prices": {
+    "keyframe_image": 1.0,
+    "draft_i2v": 0.5,
+    "final_i2v": 3.0,
+    "draft_t2v": 0.5,
+    "final_t2v": 3.0,
+    "audio_addon_per_sec": 0.3
+  },
+  "limits": {"max_prompt_chars": 1200, "max_clip_seconds": 15, "max_chain_shots": 4},
+  "classes": {
+    "keyframe_image": {"adapter": "UNBOUND", "verify": true},
+    "draft_i2v": {"adapter": "UNBOUND", "verify": true},
+    "final_i2v": {"adapter": "UNBOUND", "verify": true},
+    "draft_t2v": {"adapter": "UNBOUND", "verify": true},
+    "final_t2v": {"adapter": "UNBOUND", "verify": true}
+  }
+}
