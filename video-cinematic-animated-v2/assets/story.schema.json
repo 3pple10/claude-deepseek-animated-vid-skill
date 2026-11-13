@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Video Cinematic Story Graph (procedural track)",
+  "type": "object",
+  "required": ["title", "beats"],
+  "properties": {
+    "title": {"type": "string"},
+    "factual": {"type": "boolean", "default": true},
+    "facts": {"type": "array", "items": {"type": "object", "required": ["claim", "source"], "properties": {"claim": {"type": "string"}, "source": {"type": "string", "format": "uri"}}}},
+    "voice": {"type": "object", "properties": {"provider": {"enum": ["espeak", "file"]}, "rate": {"type": "number"}, "voice": {"type": "string"}, "pitch": {"type": "number"}}},
+    "music": {"type": "object", "properties": {"mood": {"enum": ["wonder", "tense"]}, "bpm": {"type": "number"}}},
+    "lead_frames": {"type": "integer", "default": 2, "description": "visual cues fire this many frames before their word"},
+    "beats": {
+      "type": "array", "minItems": 6,
+      "items": {
+        "type": "object", "required": ["id", "role", "text", "scene", "cam"],
+        "properties": {
+          "id": {"type": "string"},
+          "role": {"enum": ["hook", "setting", "escalation", "snap", "deadpan", "explanation", "consequence", "twist"]},
+          "text": {"type": "string", "description": "narration, max 28 words"},
+          "audio": {"type": "string", "description": "optional path to a real voice recording for this beat"},
+          "scene": {"type": "string", "description": "a scene from the scene library (engine/scenes.py)"},
+          "params": {"type": "object"},
+          "cam": {
+            "type": "object",
+            "properties": {
+              "from": {"type": "object", "properties": {"x": {"type": "number"}, "y": {"type": "number"}, "zoom": {"type": "number"}, "roll": {"type": "number"}}},
+              "to": {"type": "object"},
+              "glide": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+              "creep": {"type": "number", "description": "continuous push-in; keeps the camera alive"},
+              "kicks": {"type": "array", "items": {"type": "string"}, "description": "cue names that trigger an impact shake"}
+            }
+          },
+          "cues": {"type": "object", "additionalProperties": {"type": "object", "description": "{on: word} or {word: index} or {t: seconds}"}},
+          "flash": {"type": "array", "items": {"type": "string"}},
+          "sfx": {"type": "array", "items": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "on": {"type": "string"}, "word": {"type": "integer"}, "t": {"type": "number"}, "gain": {"type": "number"}}}},
+          "music": {"type": "number", "minimum": 0, "maximum": 1},
+          "xfade": {"type": "number"}, "cut": {"type": "boolean"},
+          "pre": {"type": "number"}, "gap": {"type": "number"}, "tail": {"type": "number"}
+        }
+      }
+    }
+  }
+}
