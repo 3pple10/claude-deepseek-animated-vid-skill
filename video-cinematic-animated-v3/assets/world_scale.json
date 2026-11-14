@@ -1,0 +1,33 @@
+{
+  "anchor_real_cm": 170,
+  "anchor_pixels":  1400,
+  "ground_y_px":    1700,
+  "heights_cm": {
+    "baby":           50,   "toddler":        85,
+    "kid":           120,   "teen":           155,
+    "adult_short":   158,   "adult_avg":      170,
+    "adult_tall":    190,
+    "cat":            30,   "dog_small":       40,
+    "dog_large":      75,   "horse":          160,
+    "chair":          90,   "stool":           65,
+    "table_dining":   75,   "table_coffee":    45,
+    "desk":           75,   "bed_single":      55,
+    "bed_double":     60,   "sofa":            90,
+    "door":          210,   "window":         120,
+    "building_floor":300,   "building_story": 320,
+    "park_bench":     90,   "trash_bin":      110,
+    "fire_hydrant":   65,   "streetlight":    600,
+    "utility_pole":  900,   "bus_stop_sign":  250,
+    "tree_small":    400,   "tree_medium":    700,
+    "tree_large":   1200,   "shrub":          120,
+    "flower":         60,
+    "bicycle":       110,   "scooter":        115,
+    "motorcycle":    115,   "car":            150,
+    "suv":           185,   "van":            210,
+    "pickup_truck":  190,   "semi_truck":     400,
+    "bus":           310,   "tram":           340,
+    "traffic_cone":   75,   "bollard":         90,
+    "mailbox":       120,   "fire_escape":    200,
+    "dumpster":      145,   "ladder":         300
+  }
+}
